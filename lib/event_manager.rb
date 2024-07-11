@@ -73,20 +73,24 @@ def save_thank_you_letter(id, form_letter)
   puts "Saved thank you letter for user #{id}"
 end
 
-template_letter = File.read('form_letter.erb')
-erb_template = ERB.new template_letter
+def generate_thank_you_letters(contents)
+  template_letter = File.read('form_letter.erb')
+  erb_template = ERB.new template_letter
+  contents.each do |row|
+    id = row[0]
+    name = row[:first_name]#.ljust(15, ' ')
+    zipcode = clean_zipcodes(row[:zipcode])#.ljust(10, ' ')
+    home_phone = clean_phone_numbers(row[:homephone])#.ljust(15, ' ')
 
-contents.each do |row|
-  id = row[0]
-  name = row[:first_name]#.ljust(15, ' ')
-  zipcode = clean_zipcodes(row[:zipcode])#.ljust(10, ' ')
-  home_phone = clean_phone_numbers(row[:homephone])#.ljust(15, ' ')
+    legislators = legislators_by_zipcode(zipcode)
 
-  legislators = legislators_by_zipcode(zipcode)
+    # puts "Name: #{name} | Zip-code: #{zipcode} | Home Phone: #{home_phone}"
 
-  # puts "Name: #{name} | Zip-code: #{zipcode} | Home Phone: #{home_phone}"
+    form_letter = erb_template.result(binding)
 
-  form_letter = erb_template.result(binding)
-
-  save_thank_you_letter(id, form_letter)
+    save_thank_you_letter(id, form_letter)
+  end
 end
+
+puts "Generate Thank You Letters..."
+generate_thank_you_letters(contents)
