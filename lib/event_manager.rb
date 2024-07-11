@@ -92,5 +92,77 @@ def generate_thank_you_letters(contents)
   end
 end
 
+def registration_dates_n_times(contents)
+  all_registration_dates_n_times = []
+
+  contents.each do |row|
+    date_n_time = row[:regdate]
+
+    date, time = date_n_time.split
+
+    month, day, year = date.split("/")
+    hour, minute = time.split(":")
+
+    full_year = if year.size == 2
+                  year.rjust(4,"20")
+                elsif year.size == 4
+                  year
+                else
+                  "N/A"
+                end
+
+    registered = Time.mktime(full_year,month,day,hour,minute,0)
+
+    all_registration_dates_n_times << registered
+  end
+
+  all_registration_dates_n_times
+end
+
+def peak_registration_hours(all_registration_dates_n_times)
+   hours = Hash.new(0)
+
+  all_registration_dates_n_times.each do |reg|
+    hours[reg.hour] += 1
+  end
+
+  hours = hours.sort_by { |hour, frequency| -frequency }.to_h
+
+  puts "Hour".ljust(7, " ") + "Frequency"
+  hours.each do |hour, frequency|
+    puts "#{hour.to_s.ljust(5," ")}: #{frequency}"
+  end
+
+  peak_hour, frequency = hours.max_by { |hour, frequency| frequency }
+
+  puts "The Best hour to advertise is #{peak_hour}, with #{frequency} registrations during that time.\n\n"
+end
+
+def peak_registration_days(all_registration_dates_n_times)
+  days_of_the_week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  days = Hash.new(0)
+
+  all_registration_dates_n_times.each do |reg|
+    days[days_of_the_week[reg.wday]] += 1
+  end
+
+  days = days.sort_by { |day, frequency| -frequency }.to_h
+
+  puts "Day".ljust(12," ") + "Frequency"
+  days.each do |day, frequency|
+    puts "#{day.ljust(10, " ")}: #{frequency}"
+  end
+
+  peak_day, frequency = days.max_by { |day, frequency| frequency }
+
+  puts "The Best day to advertise is #{peak_day}, with #{frequency} registrations during that time.\n\n"
+end
+
 puts "Generate Thank You Letters..."
-generate_thank_you_letters(contents)
+#generate_thank_you_letters(contents)
+
+puts "Best Time and Day to Advertise..."
+
+all_registration_dates_n_times = registration_dates_n_times(contents)
+peak_registration_hours(all_registration_dates_n_times)
+peak_registration_days(all_registration_dates_n_times)
