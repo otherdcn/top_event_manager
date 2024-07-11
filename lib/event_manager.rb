@@ -1,17 +1,19 @@
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
+require 'colorize'
 
 puts "Event Manager Initialized!"
 
-small_attendees_file = "./event_attendees.csv"
-puts "Does small sample data file exist: #{File.exist? small_attendees_file}\n\n"
+def contents
+  small_attendees_file = "./event_attendees.csv"
 
-contents = CSV.open(
-  small_attendees_file,
-  headers: true,
-  header_converters: :symbol
-)
+  contents = CSV.open(
+    small_attendees_file,
+    headers: true,
+    header_converters: :symbol
+  )
+end
 
 def clean_zipcodes(zipcode)
   zipcode.to_s.rjust(5,'0')[0..4]
@@ -128,14 +130,14 @@ def peak_registration_hours(all_registration_dates_n_times)
 
   hours = hours.sort_by { |hour, frequency| -frequency }.to_h
 
-  puts "Hour".ljust(7, " ") + "Frequency"
+  puts "Hour".ljust(7, " ").underline + "Frequency".underline
   hours.each do |hour, frequency|
-    puts "#{hour.to_s.ljust(5," ")}: #{frequency}"
+    puts "#{hour.to_s.ljust(5," ")} | #{frequency}"
   end
 
   peak_hour, frequency = hours.max_by { |hour, frequency| frequency }
 
-  puts "The Best hour to advertise is #{peak_hour}, with #{frequency} registrations during that time.\n\n"
+  puts "==> The Best hour to advertise is #{peak_hour}, with #{frequency} registrations during that time.\n\n"
 end
 
 def peak_registration_days(all_registration_dates_n_times)
@@ -148,20 +150,20 @@ def peak_registration_days(all_registration_dates_n_times)
 
   days = days.sort_by { |day, frequency| -frequency }.to_h
 
-  puts "Day".ljust(12," ") + "Frequency"
+  puts "Day".ljust(12," ").underline + "Frequency".underline
   days.each do |day, frequency|
-    puts "#{day.ljust(10, " ")}: #{frequency}"
+    puts "#{day.ljust(10, " ")} | #{frequency}"
   end
 
   peak_day, frequency = days.max_by { |day, frequency| frequency }
 
-  puts "The Best day to advertise is #{peak_day}, with #{frequency} registrations during that time.\n\n"
+  puts "==> The Best day to advertise is #{peak_day}, with #{frequency} registrations during that time.\n\n"
 end
 
-puts "Generate Thank You Letters..."
-#generate_thank_you_letters(contents)
+puts "===> Generate Thank You Letters..."
+generate_thank_you_letters(contents)
 
-puts "Best Time and Day to Advertise..."
+puts "===> Best Time and Day to Advertise..."
 
 all_registration_dates_n_times = registration_dates_n_times(contents)
 peak_registration_hours(all_registration_dates_n_times)
