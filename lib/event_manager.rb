@@ -8,7 +8,7 @@ puts "Event Manager Initialized!"
 def contents
   small_attendees_file = "./event_attendees.csv"
 
-  contents = CSV.open(
+  CSV.open(
     small_attendees_file,
     headers: true,
     header_converters: :symbol
@@ -24,7 +24,7 @@ def legislators_by_zipcode(zipcode)
   civic_info.key = File.read('secret.key').strip
 
   begin
-    legislators = civic_info.representative_info_by_address(
+    civic_info.representative_info_by_address(
       address: zipcode,
       levels: 'country',
       roles: ['legislatorUpperBody', 'legislatorLowerBody']
@@ -128,14 +128,14 @@ def peak_registration_hours(all_registration_dates_n_times)
     hours[reg.hour] += 1
   end
 
-  hours = hours.sort_by { |hour, frequency| -frequency }.to_h
+  hours = hours.sort_by { |_hour, frequency| -frequency }.to_h
 
   puts "Hour".ljust(7, " ").underline + "Frequency".underline
   hours.each do |hour, frequency|
     puts "#{hour.to_s.ljust(5," ")} | #{frequency}"
   end
 
-  peak_hour, frequency = hours.max_by { |hour, frequency| frequency }
+  peak_hour, frequency = hours.max_by { |_hour, frequency| frequency }
 
   puts "==> The Best hour to advertise is #{peak_hour}, with #{frequency} registrations during that time.\n\n"
 end
@@ -148,14 +148,14 @@ def peak_registration_days(all_registration_dates_n_times)
     days[days_of_the_week[reg.wday]] += 1
   end
 
-  days = days.sort_by { |day, frequency| -frequency }.to_h
+  days = days.sort_by { |_day, frequency| -frequency }.to_h
 
   puts "Day".ljust(12," ").underline + "Frequency".underline
   days.each do |day, frequency|
     puts "#{day.ljust(10, " ")} | #{frequency}"
   end
 
-  peak_day, frequency = days.max_by { |day, frequency| frequency }
+  peak_day, frequency = days.max_by { |_day, frequency| frequency }
 
   puts "==> The Best day to advertise is #{peak_day}, with #{frequency} registrations during that time.\n\n"
 end
