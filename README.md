@@ -1,1 +1,1 @@
-Following the TOP (The Odin Project) course and creating event manager applications projects to practice my skills in Ruby files and serialization.
+Following the [TOP (The Odin Project)](https://www.theodinproject.com/lessons/ruby-event-manager) course and creating event manager applications projects to practice my skills in Ruby files and serialization.
